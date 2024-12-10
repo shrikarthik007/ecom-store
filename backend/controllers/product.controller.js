@@ -108,5 +108,38 @@ export const getRecommendedProducts = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   try {
+    const { category } = req.params;
+    const products = await Product.find({ category });
+    res.json(products);
   } catch (error) {}
 };
+
+export const toggleFeaturedProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      product.isFeatured = !product.isFeatured;
+      const updatedProduct = await product.save();
+      await updateFeaturedProductsCache();
+
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({
+        error: "Product not found",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      error: "Server error",
+    });
+  }
+};
+
+async function updateFeaturedProductsCache() {
+  try {
+    const featuredProducts = await Product.find({ isFeatured: true }).lean();
+    await redis.set("featuredProducts", JSON.stringify(featuredProducts));
+  } catch (error) {
+    console.log(error);
+  }
+}
