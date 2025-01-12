@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
 import { motion } from "framer-motion";
+import { useUserStore } from "../store/useUserStore"
 
 const SignUpPage = () => {
   const loading = false;
@@ -11,9 +12,12 @@ const SignUpPage = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const {signup,   } = useUserStore();
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    console.log(formData, "Form Data");
+    signup(formData);
   };
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">

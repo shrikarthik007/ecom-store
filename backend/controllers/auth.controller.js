@@ -38,6 +38,7 @@ const setCookies = (res, accessToken, refreshToken) => {
 };
 
 export const signup = async (req, res) => {
+  console.log(req.body, "req.body");
   const { name, email, password } = req.body;
   try {
     const userExists = await User.findOne({ email });
@@ -51,7 +52,7 @@ export const signup = async (req, res) => {
       email,
       password,
     });
-
+    console.log(user, "user");
     const { accessToken, refreshToken } = generateTokens(user._id);
     await storeRefreshToken(user._id, refreshToken);
 
@@ -67,6 +68,7 @@ export const signup = async (req, res) => {
       message: "Signup successful",
     });
   } catch (error) {
+    console.log(error, "error in signup");
     res.status(500).json({
       error: "Server error",
     });
