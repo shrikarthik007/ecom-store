@@ -1,17 +1,30 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
+import { useUserStore } from "../store/useUserStore.js";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const loading = false;
+ 
 
-  const handleSubmit = (e) => {
+  const { login, loading } = useUserStore();
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(email, password);
+    try {
+      const response = await login({ email, password });
+      console.log("Login successful:", response);
+      navigate("/home");
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(error.message || "Login failed");
+      
+    }
   };
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">

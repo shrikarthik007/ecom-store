@@ -16,9 +16,9 @@ function App() {
       <div className="relative z-50 pt-20 ">
         <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/signUp" element={<SignUpPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
         </Routes>
       </div>
       <Toaster />

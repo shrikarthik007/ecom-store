@@ -2,7 +2,6 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import axiosInstance from "../lib/axios";
 
 export const useUserStore = create((set, get) => ({
   User: null,
@@ -10,7 +9,6 @@ export const useUserStore = create((set, get) => ({
   checkingAuth: true,
   signup: async ({ name, email, password, confirmPassword }) => {
     set({ loading: true });
-    console.log("Request sent to:", axios.defaults.baseURL || "Direct URL");
 
     if (password !== confirmPassword) {
       set({ loading: false });
@@ -18,11 +16,7 @@ export const useUserStore = create((set, get) => ({
     }
 
     try {
-      console.log(
-        "Request sent to:",
-        `${axiosInstance.defaults.baseURL}/auth/signup`
-      );
-      const res = await axios.post("/api/auth/signup", {
+      const res = await axios.post("http://localhost:5000/api/auth/signup", {
         name,
         email,
         password,
@@ -33,6 +27,34 @@ export const useUserStore = create((set, get) => ({
     } catch (error) {
       set({ loading: false });
       toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+  login: async ({ email, password }) => {
+    set({ loading: true });
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+
+      set({ user: res.data, loading: false });
+      toast.success("Login successful");
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response.data.error || "An error occurred");
+    }
+  },
+  checkAuth: async () => {
+    set({ checkingAuth: true });
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/auth/profile"
+      );
+      set({ user: response.data, checkingAuth: false });
+    } catch (error) {
+      console.log(error.message);
+      set({ checkingAuth: false, user: null });
     }
   },
 }));

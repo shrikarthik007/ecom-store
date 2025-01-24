@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUserStore } from "../store/useUserStore"
 
 const SignUpPage = () => {
-  const loading = false;
+  const navigate = useNavigate();
+ 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,11 +14,21 @@ const SignUpPage = () => {
     confirmPassword: "",
   });
 
-  const {signup,   } = useUserStore();
-  const handleSubmit = (e) => {
+  const {signup, loading  } = useUserStore();
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData, "Form Data");
-    signup(formData);
+    try {
+      const response = await signup(formData); // Wait for the promise to resolve
+      console.log("Signup successful:", response);
+    
+      navigate("/"); // Navigate to login page
+    } catch (error) {
+      console.error("Signup error:", error);
+      
+      alert(error.message || "Signup failed");
+    }
+    console.log("Submitted" , signup(formData));
   };
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
